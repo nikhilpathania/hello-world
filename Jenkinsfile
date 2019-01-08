@@ -12,5 +12,12 @@ pipeline {
         stash(name: 'build-test-artifacts', includes: '**/target/surefire-reports/TEST-*.xml,target/*.jar')
       }
     }
+    stage('Report & Publish') {
+      steps {
+        unstash 'build-test-artifacts'
+        junit '**/target/surefire-reports/TEST-*.xml'
+        archiveArtifacts(artifacts: 'target/*.jar', onlyIfSuccessful: true)
+      }
+    }
   }
 }
