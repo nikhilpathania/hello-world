@@ -16,6 +16,12 @@ pipeline {
     stage('Report & Publish') {
       parallel {
         stage('Report & Publish') {
+          agent {
+            node {
+              label 'docker'
+            }
+
+          }
           steps {
             unstash 'build-test-artifacts'
             junit '**/target/surefire-reports/TEST-*.xml'
