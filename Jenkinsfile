@@ -14,10 +14,24 @@ pipeline {
       }
     }
     stage('Report & Publish') {
-      steps {
-        unstash 'build-test-artifacts'
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archiveArtifacts(artifacts: 'target/*.jar', onlyIfSuccessful: true)
+      parallel {
+        stage('Report & Publish') {
+          steps {
+            unstash 'build-test-artifacts'
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archiveArtifacts(artifacts: 'target/*.jar', onlyIfSuccessful: true)
+          }
+        }
+        stage('Publish to Artifactory') {
+          steps {
+            script {
+              unstash build-test-artifacts
+
+
+            }
+
+          }
+        }
       }
     }
   }
