@@ -23,11 +23,26 @@ pipeline {
           }
         }
         stage('Publish to Artifactory') {
+          agent {
+            node {
+              label 'docker'
+            }
+
+          }
           steps {
             script {
-              unstash build-test-artifacts
+              unstash 'build-test-artifacts'
 
-
+              def server = Artifactory.server 'MyArtifactory1'
+              def uploadSpec = """{
+                "files": [
+                  {
+                    "pattern": "target/*.jar",
+                    "target": "example-repo-local/${BRANCH_NAME}/${BUILD_NUMBER}/"
+                  }
+                ]
+              }"""
+              server.upload(uploadSpec)
             }
 
           }
